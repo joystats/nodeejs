@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Index page</title>
+<%- include('header') %>
+<script>
+const socket = io();
+function send(){
+	const postData = {
+		message: $("#message").val()
+	}
+	$.ajax({
+		headers:{
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		url:'./save',
+		type:'POST',
+		data: JSON.stringify(postData),
+		dataType:'json',
+		success:function(data){
+			console.log('send')
+			console.log(data)
+			socket.emit("save_message",data)
+		}
+	})
+	
+}
+
+$(function(){
+	socket.on("refresh_data",(data)=>{
+		console.log('receive')
+		$("#result").append('<li>'+data.message+'</li>')
+	})
+})
+
+</script>
+</head>
+<body>
+	<h1>Index page</h1>
+	<input type="text" placholder="message" id="message">
+	<button onclick="send()">Send</button>
+	<ul id="result">
+	</ul>
+</body>
+</html>
